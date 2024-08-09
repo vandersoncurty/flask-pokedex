@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Search</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-4">Pokémon Search</h1>
+        <form id="pokemon-form" class="form-inline justify-content-center">
+            <div class="form-group mb-2">
+                <label for="pokemon-name" class="sr-only">Pokémon Name</label>
+                <input type="text" class="form-control" id="pokemon-name" placeholder="Enter Pokémon name">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2 ml-2">Search</button>
+        </form>
+        <div id="pokemon-data" class="text-center mt-4"></div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+        document.getElementById('pokemon-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const pokemonName = document.getElementById('pokemon-name').value.toLowerCase();
+            
+            fetch(`/pokemon/${pokemonName}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('pokemon-data').innerHTML = '<p class="text-danger">Pokémon not found!</p>';
+                    } else {
+                        document.getElementById('pokemon-data').innerHTML = `
+                            <h2>${data.name} (#${data.id})</h2>
+                            <img src="${data.image}" alt="${data.name}">
+                            <p>Type: ${data.type}</p>
+                            <p>Height: ${data.height} decimetres</p>
+                            <p>Weight: ${data.weight} hectograms</p>
+                        `;
+                    }
+                });
+        });
+    </script>
+</body>
+</html>
